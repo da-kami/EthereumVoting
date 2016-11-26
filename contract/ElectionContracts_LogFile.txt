@@ -1,0 +1,3 @@
+Election Contract log:
+
+v1: 0xf4a5c34e529f3d9eb677aaacad16c0bdd22319e6
