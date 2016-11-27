@@ -10,9 +10,14 @@ There are 3 systems acting together:
 
 First you have to create a slack channel. Then you add a bot-user to that channel. The token of the bot-user and the name of the bot-user are given to the NodeJS application upon startup.
 Before you start NodeJS you also have to start your Ethereum client and:
-	start like this (ropsten, morden testnet ended): geth --datadir %appdata%\Ethereum\testnet\chaindata_ropsten init genesis.json; geth --datadir C:\Users\dkarzel\AppData\Roaming\Ethereum\testnet\chaindata_ropsten --networkid 3 console
-	expose RPC like this: admin.startRPC("127.0.0.1", 8545, "*", "web3,net,eth,personal")
-	you will have to download the genesis block, check here: https://blog.ethereum.org/2016/11/20/from-morden-to-ropsten/ 
+	
+start like this (ropsten, morden testnet ended): 
+	geth --datadir %appdata%\Ethereum\testnet\chaindata_ropsten init genesis.json; geth --datadir C:\Users\dkarzel\AppData\Roaming\Ethereum\testnet\chaindata_ropsten --networkid 3 console
+
+expose RPC like this: 
+	admin.startRPC("127.0.0.1", 8545, "*", "web3,net,eth,personal")
+	
+you will have to download the genesis block, check here: https://blog.ethereum.org/2016/11/20/from-morden-to-ropsten/ 
 
 
 ## Start the nodeJS program with the following parameters:
@@ -27,7 +32,7 @@ Before you start NodeJS you also have to start your Ethereum client and:
 	CONTRACT_ABI=[the ethereum application binary interface of the contract]
 	INIT_ACCOUNT_MONEY=[the money that will be transferred to the voter account initially]
 
-	you can start like this:
-		PARAM1_NAME='param1_value' PARAM2_NAME='param2_value' (...) npm start
+you can start like this:
+	PARAM1_NAME='param1_value' PARAM2_NAME='param2_value' (...) npm start
 
 
