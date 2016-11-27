@@ -12,9 +12,11 @@ First you have to create a slack channel. Then you add a bot-user to that channe
 Before you start NodeJS you also have to start your Ethereum client and:
 	
 start like this (ropsten, morden testnet ended): 
+	
 	geth --datadir %appdata%\Ethereum\testnet\chaindata_ropsten init genesis.json; geth --datadir C:\Users\dkarzel\AppData\Roaming\Ethereum\testnet\chaindata_ropsten --networkid 3 console
 
 expose RPC like this: 
+	
 	admin.startRPC("127.0.0.1", 8545, "*", "web3,net,eth,personal")
 	
 you will have to download the genesis block, check here: https://blog.ethereum.org/2016/11/20/from-morden-to-ropsten/ 
@@ -33,6 +35,7 @@ you will have to download the genesis block, check here: https://blog.ethereum.o
 	INIT_ACCOUNT_MONEY=[the money that will be transferred to the voter account initially]
 
 you can start like this:
+	
 	PARAM1_NAME='param1_value' PARAM2_NAME='param2_value' (...) npm start
 
 
