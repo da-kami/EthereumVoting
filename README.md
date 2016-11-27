@@ -23,11 +23,12 @@ Since the ABI won't change unless you use a different contract the ABI is not pa
 ### Preparing Ethereum Node
 Before you start NodeJS you also have to start your Ethereum Client. It is assumed that you are already familiar with Ethereum the go-Implementation (geth). The Ethereum Client has to be in sync for this to work. So far we only tested on the test-net (ropsten); but you can also start the Ethereum Client on the main-net and expose your RPC. Be aware that this is dangerous, because the application automatically generates accounts and transfers money to them. It is furthermore not recommended that you expose your client's RPC interface with a main-net account behind.
 	
-start like this (ropsten, morden testnet ended): 
+At the moment you have to start the test-net like this (ropsten test-net): 
 	
-	geth --datadir %appdata%\Ethereum\testnet\chaindata_ropsten init genesis.json; geth --datadir C:\Users\dkarzel\AppData\Roaming\Ethereum\testnet\chaindata_ropsten --networkid 3 console
+	geth --datadir %appdata%\Ethereum\testnet\chaindata_ropsten init genesis.json; geth --datadir  %appdata%\Ethereum\testnet\chaindata_ropsten --networkid 3 console
 
 more info here: https://blog.ethereum.org/2016/11/20/from-morden-to-ropsten/ 
+Note that the pathes used are for Windows ;)
 
 expose RPC like this: 
 	
