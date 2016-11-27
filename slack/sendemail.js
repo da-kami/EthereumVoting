@@ -41,7 +41,7 @@ var sendAnEmail = function (emailAddressFrom, emailFromPwd, emailAddressTo, subj
 	});
 
 	var mailOptions = {
-	    from: '"Daniel Karzel" <daniel.karzel@senacor.com>', // sender address
+	    from: '"Senacor DevCon" <noreply@senacor.com>', // sender address
 	    to: emailAddressTo, // list of receivers
 	    subject: subject, // Subject line
 	    text: text, // plaintext body

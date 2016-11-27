@@ -1,6 +1,9 @@
 var emailSenderClient = require('./sendemail');
 //var ethClient = require('./ethereumclient');
 
+var rpc = require('json-rpc2');
+var rpcClient = rpc.Client.$create(8545, "localhost");
+
 var Web3 = require('./node_modules/web3');
 var web3 = new Web3();
 //set provider for ethereum     ???
@@ -38,6 +41,9 @@ var slack = new RtmClient(bot_token, {
 //var roomPlayers = {};
 var voterRegisterCode = {};
 var voterRegistry = {};
+var voterToAddress = {};
+var voterToPwd = {};
+var voterToEmail = {};
 
 // daka: removed twilio from this version; get this working if needed in the end
 //twilio variables
@@ -130,6 +136,11 @@ var printHelp = function(channel) {
   }, 30000);
 }*/
 
+var removeAccountsExceptFromCoinbase = function(channel) {
+  // TODO: Implement this, all the generated accounts should be removed through this function.
+  // only the coinbase should remain
+}
+
 var printEthereumNodeStats = function(channel) {
 	var curBlockNr = web3.eth.blockNumber;
 	var syncingStatus = web3.eth.syncing;
@@ -144,13 +155,16 @@ var printEthereumNodeStats = function(channel) {
 
 var sendRegistrationEmail = function (channel, uName, emailAdr) {
 
+  newEthereumAccount(channel, uName, emailAdr);
+
   var registerCode = Math.floor(100000 + Math.random() * 900000);
 
   voterRegisterCode[uName] = registerCode;
   //voterRegistry[uName] = false;
 
   emailSenderClient.sendAnEmail(process.env.EMAIL_ADR, process.env.EMAIL_PWD, emailAdr, 'Your registration code', 'Call: unlock ' + registerCode);
-  slack.sendMessage('<@'+ uName +'>: Registration code was sent to' + emailAdr, channel.id);
+  voterToEmail[uName] = emailAdr;
+  slack.sendMessage('<@'+ uName +'>: Registration code was sent to: ' + emailAdr, channel.id);
 }
 
 var unlockVoterAccount = function(channel, uName, uCode) {
@@ -159,24 +173,41 @@ var unlockVoterAccount = function(channel, uName, uCode) {
   console.log("unlock: code saved in program: " + registerCode);
   console.log("unlock: code given by user: " + uCode);
 
-  if (uCode === registerCode) {
+  if (parseInt(uCode) == registerCode) {
     
     voterRegistry[uName] = true;
 
+    emailSenderClient.sendAnEmail(process.env.EMAIL_ADR, process.env.EMAIL_PWD, voterToEmail[uName], 'Your ethereum account', 'address: ' + voterToAddress[uName] + ", password: " + voterToPwd[uName]);
 
-    slack.sendMessage('<@'+ uName +'>: Registration complete, you can call [vote PARTY] now ', channel.id);
+    slack.sendMessage('<@'+ uName +'>: Registration complete, email with your account and password was sent to you ', channel.id);
   }
   else {
     slack.sendMessage('<@'+ uName +'>: ERROR: Registration code mismatch! ', channel.id);
   }
 }
 
-var newEthereumAccount = function(channel) {
-  var pwdNewAccount = "Senacor" + Math.random();
+var newEthereumAccount = function(channel, uName, emailAdr) {
+  var pwdNewAccount = "Senacor" + Math.floor(100000 + Math.random() * 900000);
+  voterToPwd[uName] = pwdNewAccount;
+  //console.log("password for new account: " + pwdNewAccount);
 
-  console.log("password for new account: " + pwdNewAccount);
-  
-  var newAccountAddress = 
+  var accountId;
+
+  // works
+  rpcClient.call("personal_newAccount", [pwdNewAccount], function(err,result){ 
+    console.log('Account created', result);
+    
+    if (err != null)
+    {
+      console.log('ERROR', err);
+      slack.sendMessage('<@'+ uName +'>: ERROR: Failed to create account! ', channel.id);
+    }
+    
+    voterToAddress[uName] = result;
+
+    // TODO: transact money to account...
+
+  });
 }
 
 var processAction = function (message) {
@@ -244,10 +275,9 @@ var processAction = function (message) {
     var reg_code = message.text.split(" ") [2];
 
     unlockVoterAccount(channel, message.user, reg_code);
-  
 
-  } else if (message.text.indexOf('test new account') >= 0) {
-
+  //} else if (message.text.indexOf('test new account') >= 0) {
+  //    newEthereumAccount(channel);
   }
   
   

@@ -12,6 +12,7 @@ SLACK_ADMIN_USER=[the user that is supposed to be admin]
 COINBASE_PWD=[the password of the ethereum-client coinbase account]
 CONTRACT_ADR=[the ethereum address of the contract to be used]
 CONTRACT_ABI=[the ethereum application binary interface of the contract]
+INIT_ACCOUNT_MONEY=[the money that will be transferred to the voter account initially]
 
 you can start like this:
 PARAM1_NAME='param1_value' PARAM2_NAME='param2_value' (...) npm start
