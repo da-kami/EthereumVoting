@@ -4,9 +4,10 @@ Enable voting via Ethereum through slack chat
 ## Setup and Startup
 
 There are 3 systems acting together:
-1. Slack (slackchat)
-2. NodeJS
-3. Ethereum Client
+
+	1. Slack (slackchat)
+	2. NodeJS
+	3. Ethereum Client
 
 Please note: If you are a beginner with Ethereum you should first read through some documentation before you can work with this example.
 
