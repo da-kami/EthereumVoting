@@ -4,9 +4,9 @@ Enable voting via Ethereum through slack chat
 ## Setup and Startup
 
 There are 3 systems acting together:
-	1. Slack (slackchat)
-	2. NodeJS
-	3. Ethereum Client
+1. Slack (slackchat)
+2. NodeJS
+3. Ethereum Client
 
 Please note: If you are a beginner with Ethereum you should first read through some documentation before you can work with this example.
 
@@ -34,6 +34,7 @@ expose RPC like this:
 
 Note that "personal" is also exposed, so we are able to automatically generate accounts via the client like this:
 
+```javascript
 	var rpc = require('json-rpc2');
 	var rpcClient = rpc.Client.$create(8545, "localhost");
 	//
@@ -52,6 +53,7 @@ Note that "personal" is also exposed, so we are able to automatically generate a
 		unlockCoinbaseAccount(process.env.COINBASE_PWD, 1200);
 		web3.eth.sendTransaction({from: coinbase, to: result, value: parseInt(process.env.INIT_ACCOUNT_MONEY)});
 	});
+```
 	
 ### Startup the NodeJS component
 The nodeJS component listens to the slackbot, takes the commands that come in and communicates to the Ethereum Client via the web3 Javascript API, that can also be installed via npm.
