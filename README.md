@@ -8,8 +8,16 @@ There are 3 systems acting together:
 	2. NodeJS
 	3. Ethereum Client
 
+Please note: If you are a beginner with Ethereum you should first read through some documentation before you can work with this example.
+
 ### Preparing Slack
 First you have to create a slack channel. Then you add a bot-user to that channel. You will receive a token for the bot-user from slack. Be aware that you should not make this token publicly available. The token of the bot-user and the name of the bot-user are given to the NodeJS application upon startup.
+
+### Deploying smart contract on Ethereum test-net
+Note that the deployment of the contract (that is used via nodeJS through web3) is independent from the slack-nodeJS setup. You have to deploy the contract before you can startup the nodeJS application. 
+You find the contract in the folder "contract". Once deployed you will need the contract's address and ABI (application binary interface) for the startup of the nodeJS application. 
+
+Since the ABI won't change unless you use a different contract the ABI is not part of the parameter-set for the nodeJS application, but it is loaded from file (./slack/files/contract_abi.json).
 
 ### Preparing Ethereum Node
 Before you start NodeJS you also have to start your Ethereum Client. It is assumed that you are already familiar with Ethereum the go-Implementation (geth). The Ethereum Client has to be in sync for this to work. So far we only tested on the test-net (ropsten); but you can also start the Ethereum Client on the main-net and expose your RPC. Be aware that this is dangerous, because the application automatically generates accounts and transfers money to them. It is furthermore not recommended that you expose your client's RPC interface with a main-net account behind.
