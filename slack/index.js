@@ -125,43 +125,22 @@ var printHelp = function(channel) {
   slack.sendMessage('Vote for your next Senacor event location!', channel.id);
   slack.sendMessage('_______________________________________',channel.id);
   slack.sendMessage('The following commands are accepted: ',channel.id);
+  slack.sendMessage('    what do I vote for? : tells you the current election name and initial amount of votes.',channel.id);
   slack.sendMessage('    register user@senacor.com : sends a registration code to the email address entered.',channel.id);
   slack.sendMessage('    unlock : use the registration code to unlock your account. After this step your Ethereum account will be sent to you.',channel.id);
   slack.sendMessage('    register at contract : registers you at the contract if the contract-registration has failed.',channel.id);
-  slack.sendMessage('    unlock at contract : unlocks you at the contract if the contract.unlock has failed.',channel.id);
+  slack.sendMessage('    unlock at contract : unlocks you at the contract if the contract-unlock has failed.',channel.id);
   slack.sendMessage('    register account accountAddress accountPwd : registers already existing account by address and password.',channel.id);
   slack.sendMessage('    allowed parties : tells you the allowed parties in this election.',channel.id);
   slack.sendMessage('    add party partyName : adds a party to the current election.',channel.id);
   slack.sendMessage('    vote nrOfVotes partyName : votes for a party.',channel.id);
+  slack.sendMessage('    unlock status : checks the contract to see if the user is actually unlocked.',channel.id);
   slack.sendMessage('_______________________________________',channel.id);
   slack.sendMessage('admin only:',channel.id);
   slack.sendMessage('    clean accounts : cleans all empty accounts.',channel.id);
   slack.sendMessage('    clean min accounts : cleans all the accounts with min-value set.',channel.id);
   slack.sendMessage('    new election nrInitialVotes election-Name : set a new election. this resets the contract.',channel.id);
 }
-
-// TO BE DELETED
-/*var endGame = function (channel) {
-  slack.sendMessage('All players are now registered. Starting game...', channel.id);
-  
-  unlockCoinbaseAccount(process.env.COINBASE_PWD, 1200);
-
-
-  //web3.personal.unlockAccount(web3.eth.accounts[0], passphrase);
-  console.log('choose winner call')
-  if (chooseResult === null) {
-    chooseResult = currentLottery.chooseWinner.sendTransaction({from: web3.eth.accounts[0]}, function(err,result) {
-      theWinner = JSON.stringify(result);
-      console.log('chooseWinner ['+JSON.stringify(err)+'] [' +JSON.stringify(result)+ ']');
-      console.log('should we notify the winner?');
-    });
-  }
-  console.log(JSON.stringify(chooseResult));
-  setTimeout(function() {
-    slack.sendMessage('Winner is ['+ currentLottery.getWinner.call() +']', channel.id);
-    roomPlayers[channel.id] = 0;
-  }, 30000);
-}*/
 
 
 var printEthereumNodeStats = function(channel) {
@@ -269,7 +248,7 @@ var registerUserAtContract = function(uName, channel) {
   var accountBalance = web3.eth.getBalance(voterAdr);
 
   unlockEthereumAccount(voterAdr, voterToPwd[uName], 1200);
-  var transNo = electionInst.registerVoter.sendTransaction({from:voterAdr});
+  var transNo = electionInst.registerVoter.sendTransaction({from:voterAdr, gas:4000000});
 
   slack.sendMessage('<@'+ uName +'>: Voter registered at contract, transaction: ' + transNo, channel.id);
   return true;
@@ -340,10 +319,7 @@ var unlockVoterAccount = function(channel, uName, uCode) {
 
     // register the user at the contract - if that fails one can also trigger it again in the bot
     var success;
-
     success = registerUserAtContract(uName, channel);
-
-    // unlock user 
     if (success)
       success = unlockUserAtContract(uName, channel);
 
@@ -400,7 +376,7 @@ var whatDoIVoteFor = function(uName, channel) {
   if (electionName.length < 1)
     slack.sendMessage('<@'+ uName +'>: It seems there is no election defined yet - talk to your admin!', channel.id);
   else {
-    slack.sendMessage('<@'+ uName +'>: You are voring for: ' + electionName, channel.id);
+    slack.sendMessage('<@'+ uName +'>: You are voting for: ' + electionName, channel.id);
     slack.sendMessage('<@'+ uName +'>: The initial votes per person for this election are set to: ' + initialVoteCount, channel.id);
   }
 }
@@ -482,6 +458,16 @@ var getWinningParty = function(uName, channel) {
   slack.sendMessage('<@'+ uName +'>: Party ' + winningParty + ' is leading with ' + winningPartyVotes + ' votes.', channel.id);
 }
 
+var checkUserUnlocked = function(uName, channel) {
+
+  if (!checkUserAccount(uName, channel))
+    return false;
+
+  var isUnlocked = electionInst.isVoterRegisteredAndUnlocked.call(voterToAddress[uName]);
+
+  slack.sendMessage('<@'+ uName +'>: The unlock status of your account is: ' + isUnlocked, channel.id);
+}
+
 var processAction = function (message) {
   var channel = slack.dataStore.getChannelGroupOrDMById(message.channel);
 
@@ -499,10 +485,18 @@ var processAction = function (message) {
   } else if (message.text.indexOf('allowed parties') >= 0) {
     slack.sendMessage('<@'+ message.user +'>: Allowed parties in this election: ' + allowedParties, channel.id);
 
+  // #### INFO: ALLOWED PARTIES ####
+  } else if (message.text.indexOf('unlock status') >= 0) {
+    checkUserUnlocked(message.user, channel);
+
   // #### INFO: VOTES FOR PARTY ####
   } else if (message.text.indexOf('party votes') >= 0) {
     var partyName = message.text.split(" ") [3];
     getPartyVotes(message.user, partyName, channel);
+
+  // #### get the winning party ####
+  } else if (message.text.indexOf('winning party') >= 0) {
+    getWinningParty(message.user, channel);
 
   // #### INFO: CURRENT ELECTION ####
   } else if (message.text.indexOf('what do I vote for?') >= 0) {

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.2;
 
 contract Election {
-	address public admin;
+    address public admin;
 
     string public electionName;
     uint public initialNrOfVotesPerPerson;
@@ -17,8 +17,10 @@ contract Election {
 
     modifier adminOnly() { if (msg.sender == admin) _; }
 
-    function Election(_electionName, _initialNrOfVotesPerPerson) {
-        initialized = true;
+    function Election(
+        string _electionName, 
+        uint _initialNrOfVotesPerPerson) {
+        
         admin = msg.sender;
 
         electionName = _electionName;
@@ -29,8 +31,8 @@ contract Election {
     // So one can set a new election, but the parties and their votes stay :D
     // Thus: Reset not allowed any more, just use one contract instance per election!
     /*function setElection(string _electionName, uint _initialNrOfVotesPerPerson) adminOnly {
-    	if (_initialNrOfVotesPerPerson < 1) throw;
-    	if (bytes(_electionName).length < 1) throw;
+        if (_initialNrOfVotesPerPerson < 1) throw;
+        if (bytes(_electionName).length < 1) throw;
 
         electionName = _electionName;
         initialNrOfVotesPerPerson = _initialNrOfVotesPerPerson;
@@ -38,46 +40,49 @@ contract Election {
     }*/
 
     function addParty(string _partyName) adminOnly {
-    	partyVotes[_partyName] = 0;
+        partyVotes[_partyName] = 0;
 
-    	if (bytes(highestVotesParty).length == 0)
-    	{
-    		highestVotesParty = _partyName;
-    	}
+        if (bytes(highestVotesParty).length == 0)
+        {
+            highestVotesParty = _partyName;
+        }
     }
 
     function registerVoter() {
-    	voterIsAlreadyUnlocked[msg.sender] = false;
+        voterIsAlreadyUnlocked[msg.sender] = false;
     }
 
     function unlockVoter(address _voterToBeUnlocked) adminOnly {
         if (voterIsAlreadyUnlocked[_voterToBeUnlocked]) throw;
 
-    	voterIsAlreadyUnlocked[_voterToBeUnlocked] = true;
-    	personVotes[_voterToBeUnlocked] = initialNrOfVotesPerPerson;
+        voterIsAlreadyUnlocked[_voterToBeUnlocked] = true;
+        personVotes[_voterToBeUnlocked] = initialNrOfVotesPerPerson;
     }
 
     function vote(string _partyName, uint _nrOfVotes)
     {
-    	if (!voterIsAlreadyUnlocked[msg.sender]) throw;
-    	if (personVotes[msg.sender] < _nrOfVotes) throw;
+        if (!voterIsAlreadyUnlocked[msg.sender]) throw;
+        if (personVotes[msg.sender] < _nrOfVotes) throw;
 
-    	personVotes[msg.sender] -= _nrOfVotes;
-    	partyVotes[_partyName] += _nrOfVotes;
+        uint currPersVotes = personVotes[msg.sender];
+        personVotes[msg.sender] = currPersVotes - _nrOfVotes;
 
-    	if (partyVotes[_partyName] > nrOfVotesHighestVotesParty)
-    	{
-    		highestVotesParty = _partyName;
-    		nrOfVotesHighestVotesParty = partyVotes[_partyName];
-    	}
+        uint currentVotes = partyVotes[_partyName];
+        partyVotes[_partyName] = currentVotes + _nrOfVotes;
+
+        if (partyVotes[_partyName] > nrOfVotesHighestVotesParty)
+        {
+            highestVotesParty = _partyName;
+            nrOfVotesHighestVotesParty = partyVotes[_partyName];
+        }
     }
 
     function getPartyWithHighestVotes() returns (string party) {
-    	return highestVotesParty;
+        return highestVotesParty;
     }
 
     function getNrOfVotesOfHighestVotesParty() returns (uint votes) {
-    	return nrOfVotesHighestVotesParty;
+        return nrOfVotesHighestVotesParty;
     }
     
     function getVotesForParty(string _partyName) returns (uint votes) {

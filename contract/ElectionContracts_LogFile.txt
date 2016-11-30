@@ -10,3 +10,10 @@ fixed but: admin was not set in constructor...
 
 v4: 0xa0b6f84330f7ae4bf753c21f6304d3d376be76a4
 removed the check at the voting function that checks if the party was registered. not really needed, and most likely bugy.
+
+v5: 0xcd32a6d1c84fbf98c5bcd94e64e58421493028eb
+removed the setElection(...) part - the reset did not work correctly.
+Now the setup is like this: one contract for exactly one election
+
+v6: 0x42d4d2CBAD8cC7421e4f332bD0EfA3A111cCa349 
+fixed problem. The votes were not summed up correctly.
