@@ -1,3 +1,12 @@
 Election Contract log:
 
 v1: 0xf4a5c34e529f3d9eb677aaacad16c0bdd22319e6
+
+v2: 0xd3ff636593ae30f1ca0abae133e071f35aebaa7d
+Includes way more getters for testing
+
+v3: 0x90f40a42f182e89e84d7a1b0d4076efd1801df84
+fixed but: admin was not set in constructor...
+
+v4: 0xa0b6f84330f7ae4bf753c21f6304d3d376be76a4
+removed the check at the voting function that checks if the party was registered. not really needed, and most likely bugy.

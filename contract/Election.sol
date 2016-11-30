@@ -10,26 +10,32 @@ contract Election {
     mapping(address => uint) public personVotes;
     mapping(address => bool) public voterIsAlreadyUnlocked;
 
-    bool public initialized;
+    //bool public initialized;
 
     string public highestVotesParty;
     uint public nrOfVotesHighestVotesParty;
 
     modifier adminOnly() { if (msg.sender == admin) _; }
 
-    function Election() {
-        initialized = false;
+    function Election(_electionName, _initialNrOfVotesPerPerson) {
+        initialized = true;
+        admin = msg.sender;
+
+        electionName = _electionName;
+        initialNrOfVotesPerPerson = _initialNrOfVotesPerPerson;
     }
 
-    /*  */
-    function setElection(string _electionName, uint _initialNrOfVotesPerPerson) adminOnly {
+    // Interesting fun fact: Resetting has the bug that one cannot reset the mappings.
+    // So one can set a new election, but the parties and their votes stay :D
+    // Thus: Reset not allowed any more, just use one contract instance per election!
+    /*function setElection(string _electionName, uint _initialNrOfVotesPerPerson) adminOnly {
     	if (_initialNrOfVotesPerPerson < 1) throw;
     	if (bytes(_electionName).length < 1) throw;
 
         electionName = _electionName;
         initialNrOfVotesPerPerson = _initialNrOfVotesPerPerson;
         initialized = true;
-    }
+    }*/
 
     function addParty(string _partyName) adminOnly {
     	partyVotes[_partyName] = 0;
@@ -45,6 +51,8 @@ contract Election {
     }
 
     function unlockVoter(address _voterToBeUnlocked) adminOnly {
+        if (voterIsAlreadyUnlocked[_voterToBeUnlocked]) throw;
+
     	voterIsAlreadyUnlocked[_voterToBeUnlocked] = true;
     	personVotes[_voterToBeUnlocked] = initialNrOfVotesPerPerson;
     }
@@ -53,7 +61,6 @@ contract Election {
     {
     	if (!voterIsAlreadyUnlocked[msg.sender]) throw;
     	if (personVotes[msg.sender] < _nrOfVotes) throw;
-    	if (partyVotes[_partyName] == uint(0x0)) throw;
 
     	personVotes[msg.sender] -= _nrOfVotes;
     	partyVotes[_partyName] += _nrOfVotes;
@@ -76,4 +83,16 @@ contract Election {
     function getVotesForParty(string _partyName) returns (uint votes) {
         return partyVotes[_partyName];
     }
-}
+
+    function getCurrentElectionName() returns (string name) {
+        return electionName;
+    }
+
+    function getInitialVotesPerPerson() returns (uint votes) {
+        return initialNrOfVotesPerPerson;
+    }
+
+    function isVoterRegisteredAndUnlocked(address _voter) returns (bool status) {
+        return voterIsAlreadyUnlocked[_voter];
+    }
+ }

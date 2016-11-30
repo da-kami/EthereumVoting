@@ -28,6 +28,7 @@ At the moment you have to start the test-net like this (ropsten test-net):
 	geth --datadir %appdata%\Ethereum\testnet\chaindata_ropsten init genesis.json; geth --datadir  %appdata%\Ethereum\testnet\chaindata_ropsten --networkid 3 console
 
 more info here: https://blog.ethereum.org/2016/11/20/from-morden-to-ropsten/ 
+
 Note that the pathes used are for Windows ;)
 
 expose RPC like this: 
@@ -64,9 +65,9 @@ Install like this:
 
 	npm install
 
-This will fetch all of the node modules (dependencies). For details take a look at package.json file.
+This will fetch all of the node modules (dependencies). For details take a look at the package.json file.
 
-Start the program with the following parameters (all of them have to be set):
+Start the program with the following environment-variables as parameters (all of them have to be set):
 
 	EMAIL_ADR=[the email address that is used to send emails to users]
 	EMAIL_PWD=[the password of the email address that is used to send emails to users]
