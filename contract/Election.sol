@@ -1,6 +1,7 @@
 pragma solidity ^0.4.2;
 
 contract Election {
+
     address public admin;
 
     string public electionName;
@@ -10,7 +11,9 @@ contract Election {
     mapping(address => uint) public personVotes;
     mapping(address => bool) public voterIsAlreadyUnlocked;
 
-    //bool public initialized;
+    string[] public parties;
+
+    bool public initialized;
 
     string public highestVotesParty;
     uint public nrOfVotesHighestVotesParty;
@@ -25,6 +28,8 @@ contract Election {
 
         electionName = _electionName;
         initialNrOfVotesPerPerson = _initialNrOfVotesPerPerson;
+
+        //for (uint i = 0; i < parties.length)
     }
 
     // Interesting fun fact: Resetting has the bug that one cannot reset the mappings.
