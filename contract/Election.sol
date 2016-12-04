@@ -1,5 +1,10 @@
 pragma solidity ^0.4.2;
 
+// TODO: Fix contract. when adding a party again the votes for that
+// party are reset!!!
+// this is not supposed to happen; once added a party cannot be added again!
+// also fix: register does not make sense at the moment; because initially the
+// mapping's value will be false anyway...
 contract Election {
 
     address public admin;
